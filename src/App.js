@@ -1,25 +1,48 @@
-import logo from './logo.svg';
+import React, { useRef, useState } from 'react';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [result, setResult] = useState(0);
+  const timeInterval = useRef(null);
+  const startTime = useRef(0);
+
+  const startTimer = () => {
+    startTime.current = Date.now() - result;
+    timeInterval.current = setInterval(updateTime, 10);
+  };
+
+  const stopTimer = () => {
+    clearInterval(timeInterval.current);
+    setResult(Date.now() - startTime.current);
+  };
+
+  const resetTimer = () => {
+    clearInterval(timeInterval.current);
+    startTime.current = 0;
+    setResult(0);
+  };
+
+  const updateTime = () => {
+    setResult(Date.now() - startTime.current);
+  };
+
+  const formatTime = (time) => {
+    const date = new Date(time);
+    const minutes = Math.floor(date.getMinutes()).toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const milliseconds = Math.floor(date.getMilliseconds() / 10).toString().padStart(2, '0');
+    return `${minutes}:${seconds}:${milliseconds}`;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>STOPWATCH WEB APPLICATION</h1>
+      <div className="display">{formatTime(result)}</div>
+      <button className="start-btn" onClick={startTimer}>Start</button>
+      <button className="stop-btn" onClick={stopTimer}>Stop</button>
+      <button className="reset-btn" onClick={resetTimer}>Reset</button>
     </div>
   );
-}
+};
 
 export default App;
